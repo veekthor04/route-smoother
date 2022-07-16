@@ -16,12 +16,17 @@ It uses three filtering or smoothening logics
 ##  Dependencies
 
 ### For windows OS
-`./windows-dependencies.sh `
+```
+./windows-dependencies.sh
 
-`pip install requirements.txt`
+pip install requirements.txt
+```
+
 
 ### Others 
-`pip install requirements.txt`
+```
+pip install requirements.txt
+```
 
 
 ## Usage
@@ -34,8 +39,11 @@ route = Route("path/to/file.kml")
 get the total distance of the route.
 ```
 route.get_total_distance()
->>> 23.304
 ```
+
+`
+23.304
+`
 
 smoothen the route.
 ```
@@ -52,13 +60,13 @@ route.to_file("path/to/file.kml")
 ### Smoothen by distance
 This method of smoothening is derived from the observation that sensor malfunctioning
 causes sharp spike to a far coordinate from the current route. These spikes can be 
-trimmed based on the assumption that there is maximum allowed distance between two 
-coordinate which is called the **cutoff distance**. The default value is 500 meters
+trimmed based on the assumption that there is a maximum allowed distance between two 
+coordinates which is called the **cutoff distance**. The default value is 500 meters
 
 ### Smoothen by angle
 This method of smoothening is derived from the observation that sensor malfunctioning
 causes sharp spike angle away from the current route. These spikes can be 
-trimmed based on the assumption that there is minimum minimum allowed angle between a
+trimmed based on the assumption that there is a minimum allowed angle between a
 middle coordinate and the neighboring coordinates which is called the **cutoff angle**.
 The default value is 45 degrees.
 
