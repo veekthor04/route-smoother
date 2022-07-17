@@ -36,7 +36,7 @@ create a route object from a kml file.
 route = Route("path/to/file.kml")
 ```
 
-get the total distance of the route.
+get the total distance of the route in kilometers.
 ```
 route.get_total_distance()
 ```
@@ -73,4 +73,4 @@ The default value is 45 degrees.
 ### Smoothen by simplification
 This is derived from shapely simplify method [link](https://shapely.readthedocs.io/en/stable/manual.html#object.simplify)
 
-The level at which the simplification occurs is relative to the **granular level**
+The level at which the simplification occurs is relative to the **granular level**. The default value is 5.
