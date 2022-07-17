@@ -63,7 +63,6 @@ class Route:
         """Smoothen the line string by a given granular level"""
 
         tolerance = granular_level * 0.00003
-        print("tolerance", tolerance)
         self.smoothened_line_string = self.__get_line_string().simplify(
             tolerance,
         )
@@ -78,8 +77,10 @@ class Route:
             if i == 0 or i == len(line_coords) - 1:
                 filtered_coords.append(line_coord)
                 continue
-            current_line_string = LineString([filtered_coords[-1], line_coord])
-            current_distance = self.geod.geometry_length(current_line_string)
+
+            current_distance = self.__get_distance_between_coords(
+                filtered_coords[-1], line_coord
+            )
 
             if current_distance < cutoff_distance:
                 filtered_coords.append(line_coord)
@@ -98,29 +99,20 @@ class Route:
                 filtered_coords.append(line_coord)
                 continue
 
-            previous_to_current_line_string = LineString(
-                [filtered_coords[-1], line_coord]
-            )
-            previous_to_current_distance = geod.geometry_length(
-                previous_to_current_line_string
+            previous_to_current_distance = self.__get_distance_between_coords(
+                filtered_coords[-1], line_coord
             )
 
-            current_to_next_line_string = LineString(
-                [line_coord, line_coords[i + 1]]
-            )
-            current_to_next_distance = geod.geometry_length(
-                current_to_next_line_string
+            current_to_next_distance = self.__get_distance_between_coords(
+                line_coord, line_coords[i + 1]
             )
 
-            previous_to_next_line_string = LineString(
-                [filtered_coords[-1], line_coords[i + 1]]
-            )
-            previous_to_next_distance = geod.geometry_length(
-                previous_to_next_line_string
+            previous_to_next_distance = self.__get_distance_between_coords(
+                filtered_coords[-1], line_coords[i + 1]
             )
 
             if (
-                self.__get_point_angle(
+                self.__get_coord_angle(
                     previous_to_current_distance,
                     previous_to_next_distance,
                     current_to_next_distance,
@@ -133,10 +125,10 @@ class Route:
         self.smoothened_line_string = LineString(filtered_coords)
 
     @staticmethod
-    def __get_point_angle(A: float, B: float, C: float) -> float:
+    def __get_coord_angle(A: float, B: float, C: float) -> float:
         """
-        Calculates the angle between three points A, B, C in degrees. The
-        returned angle is the angle between the line AB and the line BC
+        Calculates the angle between three lines A, B, C in degrees. The
+        returned angle is the angle between the line A-B and the line B-C.
         """
         try:
             return degrees(acos((A * A + C * C - B * B) / (2 * A * C)))
@@ -199,48 +191,62 @@ class Route:
         cutoff_distance : int, optional
             The cutoff distance in meters which defines the maximum allowed
             distance between two points, by default 500
+
+        Raises
+        ----------
+        valueError
         """
 
         self.__validate_smoothen_input(
             granular_level, cutoff_angle, cutoff_distance
         )
+        self.smoothened_line_string = None
         self._smoothen_by_distance(cutoff_distance)
         self._smoothen_by_angle(cutoff_angle)
         self._smoothen_by_simplifying(granular_level)
+
+    def __get_distance_between_coords(
+        self, coord1: tuple, coord2: tuple
+    ) -> float:
+        """
+        Calculates the distance between two coordinates in meters
+        """
+        line_string = LineString([coord1, coord2])
+        return self.geod.geometry_length(line_string)
 
     def __validate_smoothen_input(
         self, granular_level, cutoff_angle, cutoff_distance
     ) -> None:
         """Validate the input for smoothen_route"""
-        if granular_level < 0 or granular_level > 10:
-            raise ValueError("Granular level must be between 0 and 10")
-
         if not isinstance(granular_level, int):
             raise ValueError("Granular level must be an integer")
 
-        if cutoff_angle < 0 or cutoff_angle > 60:
-            raise ValueError("Cutoff angle must be between 0 and 60")
+        if granular_level < 0 or granular_level > 10:
+            raise ValueError("Granular level must be between 0 and 10")
 
         if not isinstance(cutoff_angle, int):
             raise ValueError("Cutoff angle must be an integer")
 
-        if cutoff_distance < 0 or cutoff_distance > 1000:
-            raise ValueError("Cutoff distance must be between 0 and 10000")
+        if cutoff_angle < 0 or cutoff_angle > 60:
+            raise ValueError("Cutoff angle must be between 0 and 60")
 
         if not isinstance(cutoff_distance, int):
             raise ValueError("Cutoff distance must be an integer")
 
+        if cutoff_distance < 0 or cutoff_distance > 1000:
+            raise ValueError("Cutoff distance must be between 0 and 10000")
 
-# route = Route("task_2_sensor.kml")
 
-# print(route.get_total_distance())
+route = Route("task_2_sensor.kml")
 
-# route.smoothen_route(
-#     granular_level=5,
-#     cutoff_angle=45,
-#     cutoff_distance=500,
-# )
+print(route.get_total_distance())
 
-# print(route.get_total_distance())
+route.smoothen_route(
+    granular_level=5,
+    cutoff_angle=45,
+    cutoff_distance=500,
+)
 
-# route.to_file("task_2_sensor_smoothened.kml")
+print(route.get_total_distance())
+
+route.to_file("task_2_sensor_smoothened.kml")
