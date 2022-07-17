@@ -234,19 +234,19 @@ class Route:
             raise ValueError("Cutoff distance must be an integer")
 
         if cutoff_distance < 0 or cutoff_distance > 1000:
-            raise ValueError("Cutoff distance must be between 0 and 10000")
+            raise ValueError("Cutoff distance must be between 0 and 1000")
 
 
-route = Route("task_2_sensor.kml")
+# route = Route("task_2_sensor.kml")
 
-print(route.get_total_distance())
+# print(route.get_total_distance())
 
-route.smoothen_route(
-    granular_level=5,
-    cutoff_angle=45,
-    cutoff_distance=500,
-)
+# route.smoothen_route(
+#     granular_level=5,
+#     cutoff_angle=45,
+#     cutoff_distance=500,
+# )
 
-print(route.get_total_distance())
+# print(route.get_total_distance())
 
-route.to_file("task_2_sensor_smoothened.kml")
+# route.to_file("task_2_sensor_smoothened.kml")
