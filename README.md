@@ -83,4 +83,4 @@ The default value is 45 degrees.
 ### Smoothen by simplification
 This is derived from shapely simplify method [link](https://shapely.readthedocs.io/en/stable/manual.html#object.simplify)
 
-The level at which the simplification occurs is relative to the **granular level**. The default value is 5.
+The level at which the simplification occurs is relative to the **granular level**. The default value is 5 .
